@@ -1,16 +1,16 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
-#define WIFISSID "VINY"
-#define PASSWORD "65223374"
+#define WIFISSID "RedeIFAL"
+#define PASSWORD "redeifal"
 #define DEVICE_ID "623cd9285ba7b70a807e4985"
 #define TOKEN "BBFF-uwvbpnHk3Z8oN8fC2N26askdvC3E4v"
 
-#define VARIABLE_LABEL_TEMPERATURE "temperatura"
-#define VARIABLE_LABEL_TENSION "tensao"
-#define VARIABLE_LABEL_CURRENT "corrente"
-#define VARIABLE_LABEL_HUMIDITY "umidade"
-#define VARIABLE_LABEL_AIRTEMPERATURE "temperaturaAr"
+#define VARIABLE_LABEL_TEMPERATURE "mediaTemperatura"
+#define VARIABLE_LABEL_TENSION "mediaTensao"
+#define VARIABLE_LABEL_CURRENT "mediaCorrente"
+#define VARIABLE_LABEL_HUMIDITY "mediaUmidade"
+#define VARIABLE_LABEL_AIRTEMPERATURE "mediaTemperaturaAr"
 
 #define SERVER "things.ubidots.com"
 #define PORT 1883
@@ -59,20 +59,20 @@ void reconnect(){
 	Serial.println("Reconectado com Sucesso");
 }
 
-bool sendValues1(float temperatura, float tensao, float corrente){
+bool sendValues1(float mediaTemperatura, float mediaTensao, float mediaCorrente){
 	char json[250];
 	
-	sprintf(json, "{\"%s\":{\"value\":%02.02f, \"context\":{\"temperatura\":%02.02f,\"tensao\":%02.02f,\"corrente\":%02.02f}}}", VARIABLE_LABEL_TEMPERATURE, temperatura, temperatura, tensao, corrente);
+	sprintf(json, "{\"%s\":{\"value\":%02.02f, \"context\":{\"mediaTemperatura\":%02.02f,\"mediaTensao\":%02.02f,\"mediaCorrente\":%02.02f}}}", VARIABLE_LABEL_TEMPERATURE, mediaTemperatura, mediaTemperatura, mediaTensao, mediaCorrente);
 	
 	if(!client.publish(TOPIC, json))
 		return false;
 	
-	sprintf(json, "{\"%s\":{\"value\":%02.02f, \"context\":{\"temperatura\":%02.02f,\"tensao\":%02.02f,\"corrente\":%02.02f}}}", VARIABLE_LABEL_TENSION, tensao, temperatura, tensao, corrente);
+	sprintf(json, "{\"%s\":{\"value\":%02.02f, \"context\":{\"mediaTemperatura\":%02.02f,\"mediaTensao\":%02.02f,\"mediaCorrente\":%02.02f}}}", VARIABLE_LABEL_TENSION, mediaTensao, mediaTemperatura, mediaTensao, mediaCorrente);
 	
 	if(!client.publish(TOPIC, json))
 		return false;
 	
-	sprintf(json, "{\"%s\":{\"value\":%02.02f, \"context\":{\"temperatura\":%02.02f,\"tensao\":%02.02f,\"corrente\":%02.02f}}}", VARIABLE_LABEL_CURRENT, corrente, temperatura, tensao, corrente);
+	sprintf(json, "{\"%s\":{\"value\":%02.02f, \"context\":{\"mediaTemperatura\":%02.02f,\"mediaTensao\":%02.02f,\"mediaCorrente\":%02.02f}}}", VARIABLE_LABEL_CURRENT, mediaCorrente, mediaTemperatura, mediaTensao, mediaCorrente);
 	
 	if(!client.publish(TOPIC, json))
 		return false;
@@ -80,15 +80,15 @@ bool sendValues1(float temperatura, float tensao, float corrente){
 	return true;
 }
 
-bool sendValues2(float umidade, float temperaturaAr){
+bool sendValues2(float mediaUmidade, float mediaTemperaturaAr){
   char json[250];
   
-  sprintf(json, "{\"%s\":{\"value\":%02.02f, \"context\":{\"umidade\":%02.02f,\"temperaturaAr\":%02.02f}}}", VARIABLE_LABEL_HUMIDITY, umidade, umidade, temperaturaAr);
+  sprintf(json, "{\"%s\":{\"value\":%02.02f, \"context\":{\"mediaUmidade\":%02.02f,\"mediaTemperaturaAr\":%02.02f}}}", VARIABLE_LABEL_HUMIDITY, mediaUmidade, mediaUmidade, mediaTemperaturaAr);
   
   if(!client.publish(TOPIC, json))
     return false;
   
-  sprintf(json, "{\"%s\":{\"value\":%02.02f, \"context\":{\"umidade\":%02.02f,\"temperaturaAr\":%02.02f}}}", VARIABLE_LABEL_AIRTEMPERATURE, temperaturaAr, umidade, temperaturaAr);
+  sprintf(json, "{\"%s\":{\"value\":%02.02f, \"context\":{\"mediaUmidade\":%02.02f,\"mediaTemperaturaAr\":%02.02f}}}", VARIABLE_LABEL_AIRTEMPERATURE, mediaTemperaturaAr, mediaUmidade, mediaTemperaturaAr);
   
   if(!client.publish(TOPIC, json))
     return false;
