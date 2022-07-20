@@ -19,13 +19,17 @@ float mediaTemperatura = 0;
 
 int voltBits = 0; 
 float tensao = 0;
+float mediaTensao = 0;
 
 int ampBits = 0;
 float corrente = 0;
+float mediaCorrente;
 
 float umidade = 0;
+float mediaUmidade = 0;
 
 float temperaturaAr = 0;
+float mediaTemperaturaAr;
 
 int temporizador = 0;
 
