@@ -15,6 +15,7 @@ const float div_tensao = 11.1;
 
 int tempBits = 0;
 float temperatura = 0;
+float mediaTemperatura = 0;
 
 int voltBits = 0; 
 float tensao = 0;
@@ -26,6 +27,7 @@ float umidade = 0;
 
 float temperaturaAr = 0;
 
+int temporizador = 0;
 
 void setup() {
   
@@ -37,6 +39,7 @@ void setup() {
   Serial.begin(115200);
 
   dht.begin();
+  
   Serial.println("Configurando MQTT...");
  
   if(!mqttInit()){
@@ -58,45 +61,54 @@ void loop() {
     }
 
   tempBits = analogRead(pinTMP);
-  temperatura = (4.74 * tempBits * 100)/4095; 
+  temperatura = (Vref * tempBits * 100)/4095; 
+  
+  mediaTemperatura = mediaTemperatura + temperatura;
 
   voltBits = analogRead(pinTENS);
-  tensao = (div_tensao * (Vref * voltBits / 4095) + 1.2); 
+  tensao = (div_tensao * (Vref * voltBits / 4095)); 
+  
+  mediaTensao = mediaTensao + tensao;
 
   ampBits = analogRead(pinAMP);
   corrente = 10 * ((Vref * ampBits)/(4095) - 2.5);
+  
+  mediaCorrente = mediaCorrente + corrente;
 
   float umidade = dht.readHumidity();
   
-  float temperaturaAr = dht.readTemperature();
-
-  Serial.print("Temperatura: ");
-  Serial.print(temperatura);
-  Serial.println(" Celsius");
-
-  Serial.print("Tensao: ");
-  Serial.print(tensao);
-  Serial.println(" Volts");
-
-  Serial.print("Corrente: ");
-  Serial.print(corrente);
-  Serial.println(" Amperes");
-
-  Serial.print("Umidade: ");
-  Serial.print(umidade);
-  Serial.println(" UR");
-
-  Serial.print("Temperatura do Ar: ");
-  Serial.print(temperaturaAr);
-  Serial.println(" Celsius");
-
-  if (isnan(umidade) || isnan(temperaturaAr)) {
-    Serial.println(F("Failed to read from DHT sensor!"));
-  }
-
-  Serial.println();
+  mediaUmidade = mediaUmidade + umidade;
   
-  if(sendValues1(temperatura, tensao, corrente)){
+  float temperaturaAr = dht.readTemperature();
+  
+  mediaTemperaturaAr = mediaTemperaturaAr + temperaturaAr;
+
+  
+  
+  if(temporizador == 10){
+    
+    Serial.print("Temperatura: ");
+    Serial.print(mediaTemperatura);
+    Serial.println(" Celsius");
+  
+    Serial.print("Tensao: ");
+    Serial.print(mediaTensao);
+    Serial.println(" Volts");
+
+    Serial.print("Corrente: ");
+    Serial.print(mediaCorrente);
+    Serial.println(" Amperes");
+
+    Serial.print("Umidade: ");
+    Serial.print(mediaUmidade);
+    Serial.println(" UR");
+
+    Serial.print("Temperatura do Ar: ");
+    Serial.print(mediaTemperaturaAr);
+    Serial.println(" Celsius");
+    Serial.println();
+    
+   if(sendValues1(mediaTemperatura, mediaTensao, mediaCorrente)){
     Serial.println("Envio de Dados Concluído - Operação 1");
     Serial.println();
   }
@@ -107,7 +119,7 @@ void loop() {
   }
 
   
-  if(sendValues2(umidade, temperaturaAr)){
+  if(sendValues2(mediaUmidade, mediaTemperaturaAr)){
     Serial.println("Envio de Dados Concluído - Operação 2");
     Serial.println();
   }
@@ -116,5 +128,11 @@ void loop() {
     Serial.println("Envio de Dados Falhou! - Operação 2");
     Serial.println();
   }
-  delay(3000);
+    
+    temporizador = -1;
+ }
+  
+  temporizador = temporizador + 1;
+  
+  delay(1000);
 }
