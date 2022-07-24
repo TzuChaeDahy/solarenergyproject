@@ -10,8 +10,8 @@
 
 DHT dht(pinDHT, DHTTYPE);
 
-const float Vref = 3.3; 
-const float div_tensao = 11.1; 
+const float vref = 3.3; 
+const float divTensao = 11.1; 
 
 int tempBits = 0;
 float temperatura = 0;
@@ -65,17 +65,17 @@ void loop() {
     }
 
   tempBits = analogRead(pinTMP);
-  temperatura = (Vref * tempBits * 100)/4095; 
+  temperatura = (vref * tempBits * 100)/4095; 
   
   mediaTemperatura = mediaTemperatura + temperatura;
 
   voltBits = analogRead(pinTENS);
-  tensao = (div_tensao * (Vref * voltBits / 4095)); 
+  tensao = ((divTensao * vref * voltBits) / 4095); 
   
   mediaTensao = mediaTensao + tensao;
 
   ampBits = analogRead(pinAMP);
-  corrente = 10 * ((Vref * ampBits)/(4095) - 2.5);
+  corrente = 10 * (((vref * ampBits)/4095) - 2.5);
   
   mediaCorrente = mediaCorrente + corrente;
 
